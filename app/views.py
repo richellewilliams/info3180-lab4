@@ -78,6 +78,26 @@ def login():
 def load_user(id):
     return db.session.execute(db.select(UserProfile).filter_by(id=id)).scalar()
 
+def get_uploaded_images():
+    rootdir = os.getcwd()
+    images = []
+    print(rootdir)
+    for subdir, dirs, files in os.walk(rootdir + '/uploads'):
+        for file in files:
+            images.append(file)
+    return images
+
+
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
+
+
+@app.route('/files')
+def files():
+    return render_template('files.html', images=get_uploaded_images())
+
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###
