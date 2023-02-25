@@ -73,6 +73,15 @@ def login():
             return redirect(next_page or url_for('upload')) # The user should be redirected to the upload form instead
     return render_template("login.html", form=form)
 
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been successfully logged out!', 'success')
+    return redirect(url_for('home'))
+
+
 # user_loader callback. This callback is used to reload the user object from
 # the user ID stored in the session
 @login_manager.user_loader
