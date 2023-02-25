@@ -22,7 +22,7 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
+    return render_template('about.html', name="Flask Login and File Uploads")
 
 
 @app.route('/upload', methods=['POST', 'GET'])
@@ -40,7 +40,7 @@ def upload():
         image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         
         flash('File Saved', 'success')
-        return redirect(url_for('home')) # Update this to redirect the user to a route that displays all uploaded image files
+        return redirect(url_for('files')) # Update this to redirect the user to a route that displays all uploaded image files
 
     return render_template('upload.html', form=form)
 
@@ -69,7 +69,8 @@ def login():
 
         # Remember to flash a message to the user
             flash('You have been logged in successfully!', 'success')
-            return redirect(url_for("upload"))  # The user should be redirected to the upload form instead
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('upload')) # The user should be redirected to the upload form instead
     return render_template("login.html", form=form)
 
 # user_loader callback. This callback is used to reload the user object from
@@ -94,6 +95,7 @@ def get_image(filename):
 
 
 @app.route('/files')
+@login_required
 def files():
     return render_template('files.html', images=get_uploaded_images())
 
